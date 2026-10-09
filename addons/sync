@@ -334,6 +334,7 @@ do_sync() {
 
     # Build delete list
     DELETE_LIST=()
+    mkdir -p "$(dirname "$MAP_FILE")"
     [ -f "$MAP_FILE" ] || touch "$MAP_FILE"
     while IFS=$'\t' read -r LOCAL_ID MSFT_ID LAST_HASH STATE; do
         [ -z "$LOCAL_ID" ] && continue
