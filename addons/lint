@@ -72,8 +72,8 @@ done
 
 IDSEQ_FILE="$HOME/.todo/.idseq"
 # Prefer $TODO_DIR/../.idseq (list-parent location) over global $HOME/.todo/.idseq
-[ -f "$TODO_DIR/../.idseq" ] && IDSEQ_FILE="$TODO_DIR/../.idseq"
 [ -f "$HOME/.todo/.idseq" ] && IDSEQ_FILE="$HOME/.todo/.idseq"
+[ -f "$TODO_DIR/../.idseq" ] && IDSEQ_FILE="$TODO_DIR/../.idseq"
 
 ISSUES=0
 

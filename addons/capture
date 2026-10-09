@@ -71,8 +71,8 @@ fi
 
 # Locate the global .idseq counter
 IDSEQ_FILE="$HOME/.todo/.idseq"
-[ -f "$TODO_DIR/../.idseq" ] && IDSEQ_FILE="$TODO_DIR/../.idseq"
 [ -f "$HOME/.todo/.idseq" ] && IDSEQ_FILE="$HOME/.todo/.idseq"
+[ -f "$TODO_DIR/../.idseq" ] && IDSEQ_FILE="$TODO_DIR/../.idseq"
 
 # Create .idseq if it does not exist
 if [ ! -f "$IDSEQ_FILE" ]; then

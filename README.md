@@ -34,10 +34,20 @@ todo.sh lint
 
 ## Tests
 
-Run the addon regression suite with:
+Run the full test suite (addon regression + everyday usage simulations) with:
 
 ```sh
+bash tests/run_all.sh
+```
+
+Or run individual suites:
+
+```sh
+# Addon regression suite
 bash tests/test_addons.sh
+
+# Everyday usage simulation suite (GTD, subtasks, delegation, editor recovery, sync)
+bash tests/test_everyday_usage.sh
 ```
 
 The tests use temporary todo directories and a stub Graph API client; they do
@@ -56,8 +66,12 @@ not make network requests or modify the user's todo files.
 │   ├── lint                 [ADDON] Validate, backfill, and repair
 │   ├── resolve              [ADDON] Find a task by id: number
 │   └── sync                 [ADDON] Sync logbook ↔ Microsoft To Do
-└── config/
-    └── todo.cfg.example     Example shell configuration
+├── config/
+│   └── todo.cfg.example     Example shell configuration
+└── tests/
+    ├── run_all.sh           Master test suite runner
+    ├── test_addons.sh       Unit/addon regression test suite
+    └── test_everyday_usage.sh Everyday usage simulation test suite
 ```
 
 ## Key schema (todo.txt lines)
