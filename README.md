@@ -32,6 +32,19 @@ todo.sh lint
 
 ---
 
+## Tests
+
+Run the addon regression suite with:
+
+```sh
+bash tests/test_addons.sh
+```
+
+The tests use temporary todo directories and a stub Graph API client; they do
+not make network requests or modify the user's todo files.
+
+---
+
 ## Repository layout
 
 ```

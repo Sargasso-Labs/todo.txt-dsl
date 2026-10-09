@@ -57,18 +57,18 @@ EOF
 [ "$ACTION" = "usage" ] && { usage; exit 0; }
 
 # ── Parse flags ─────────────────────────────────────────────────────────────
-SUB_CMD="$ACTION"
+SUB_CMD=""
 DRY_RUN=0
 FORCE_DELETE=0
 MAX_DELETE_OVERRIDE=""
 
-for ARG in "$@"; do
+for ARG in "$ACTION" "$@"; do
     case "$ARG" in
         --dry-run)       DRY_RUN=1 ;;
         --force-delete)  FORCE_DELETE=1 ;;
         --max-delete=*)  MAX_DELETE_OVERRIDE="${ARG#--max-delete=}" ;;
         push|pull|status) SUB_CMD="$ARG" ;;
-        *) ;;
+        *) if [ "$ARG" = "$ACTION" ]; then SUB_CMD="$ARG"; fi ;;
     esac
 done
 
@@ -226,7 +226,7 @@ map_get() {
     local LOCAL_ID="$1" FIELD="$2"
     [ -f "$MAP_FILE" ] || return 1
     local LINE
-    LINE=$(grep -E "^${LOCAL_ID}\t" "$MAP_FILE" | head -1) || true
+    LINE=$(awk -F '\t' -v id="$LOCAL_ID" '$1 == id { print; exit }' "$MAP_FILE") || true
     [ -z "$LINE" ] && return 1
     case "$FIELD" in
         msft_id) echo "$LINE" | cut -f2 ;;
@@ -241,7 +241,7 @@ map_set() {
     # Remove existing row for this id
     if [ -f "$MAP_FILE" ]; then
         TMP=$(mktemp)
-        grep -vE "^${LOCAL_ID}\t" "$MAP_FILE" > "$TMP" || true
+        awk -F '\t' -v id="$LOCAL_ID" '$1 != id' "$MAP_FILE" > "$TMP"
         mv "$TMP" "$MAP_FILE"
     fi
     printf '%s\t%s\t%s\t%s\n' "$LOCAL_ID" "$MSFT_ID" "$HASH" "$STATE" >> "$MAP_FILE"
@@ -251,7 +251,7 @@ map_delete() {
     local LOCAL_ID="$1"
     [ -f "$MAP_FILE" ] || return 0
     TMP=$(mktemp)
-    grep -vE "^${LOCAL_ID}\t" "$MAP_FILE" > "$TMP" || true
+    awk -F '\t' -v id="$LOCAL_ID" '$1 != id' "$MAP_FILE" > "$TMP"
     mv "$TMP" "$MAP_FILE"
 }
 
@@ -274,8 +274,8 @@ local_tasks() {
 do_status() {
     echo "=== Local tasks with pending state ==="
     [ -f "$MAP_FILE" ] || { echo "(no map file)"; return; }
-    grep $'\tnew\b' "$MAP_FILE" 2>/dev/null | awk -F'\t' '{print "  NEW   id:" $1}' || true
-    grep $'\tsynced\b' "$MAP_FILE" 2>/dev/null | while IFS=$'\t' read -r LID MID HASH _; do
+    grep $'\tnew$' "$MAP_FILE" 2>/dev/null | awk -F'\t' '{print "  NEW   id:" $1}' || true
+    grep $'\tsynced$' "$MAP_FILE" 2>/dev/null | while IFS=$'\t' read -r LID MID HASH _; do
         LINE=$(grep -rh " id:${LID}\b" "$TODO_FILE" "$DONE_FILE" 2>/dev/null | head -1) || true
         [ -z "$LINE" ] && echo "  DEL   id:${LID}" && continue
         CURRENT=$(canonical_hash "$LINE")

@@ -105,11 +105,10 @@ for FILE in "${SCAN_FILES[@]}"; do
     while IFS= read -r LINE || [ -n "$LINE" ]; do
         LNUM=$((LNUM + 1))
         # Extract id: token
-        ID=$(echo "$LINE" | grep -oE '(^| )id:[0-9]+' | grep -oE '[0-9]+' | head -1)
+        ID=$(echo "$LINE" | grep -oE '(^| )id:[0-9]+' | grep -oE '[0-9]+' | head -1) || true
         if [ -n "$ID" ]; then
             if [ -n "${ID_FILE[$ID]+x}" ]; then
                 ID_DUPE[$ID]=1
-                log_warn "duplicate id:$ID — ${FILE}:${LNUM} and ${ID_FILE[$ID]}"
             else
                 ID_FILE[$ID]="${FILE}:${LNUM}"
             fi
@@ -158,7 +157,7 @@ for FILE in "${SCAN_FILES[@]}"; do
         fi
 
         # Check for duplicate id: and reassign if --fix
-        ID=$(echo "$LINE" | grep -oE '(^| )id:[0-9]+' | grep -oE '[0-9]+' | head -1)
+        ID=$(echo "$LINE" | grep -oE '(^| )id:[0-9]+' | grep -oE '[0-9]+' | head -1) || true
         if [ -n "$ID" ] && [ -n "${ID_DUPE[$ID]+x}" ]; then
             FIRST_LOC="${ID_FILE[$ID]}"
             if [ "${FIRST_LOC%%:*}" != "$FILE" ] || [ "${FIRST_LOC##*:}" -lt "$LNUM" ]; then
@@ -182,12 +181,12 @@ for FILE in "${SCAN_FILES[@]}"; do
 
         # Check p: orphans
         if [ "$OPT_ORPHANS" -eq 1 ]; then
-            PARENT_ID=$(echo "$LINE" | grep -oE '(^| )p:[0-9]+' | grep -oE '[0-9]+' | head -1)
+            PARENT_ID=$(echo "$LINE" | grep -oE '(^| )p:[0-9]+' | grep -oE '[0-9]+' | head -1) || true
             if [ -n "$PARENT_ID" ] && [ -z "${ID_FILE[$PARENT_ID]+x}" ]; then
                 if [ "$OPT_FIX" -eq 1 ] && [[ " ${WRITE_FILES[*]} " == *" $FILE "* ]]; then
                     LINE=$(echo "$LINE" | sed "s/ p:${PARENT_ID}\b//")
                     CHANGED=1
-                    log_warn "removed dangling p:${PARENT_ID} on ${FILE}:${LNUM}"
+                    log_info "removed dangling p:${PARENT_ID} on ${FILE}:${LNUM}"
                 else
                     log_warn "p:${PARENT_ID} not found in any file (${FILE}:${LNUM}: $LINE)"
                 fi
