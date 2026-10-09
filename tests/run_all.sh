@@ -17,5 +17,11 @@ bash "$ROOT/tests/test_everyday_usage.sh"
 
 echo ""
 echo "========================================================"
+echo "Running Conformance Suite (tests/test_conformance.sh)..."
+echo "========================================================"
+bash "$ROOT/tests/test_conformance.sh"
+
+echo ""
+echo "========================================================"
 echo "All test suites completed successfully!"
 echo "========================================================"

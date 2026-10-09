@@ -3,8 +3,12 @@
 A modular DSL layered on Gina Trapani's **todo.txt** format, executed through
 `todo.sh`, with one list synchronised to **Microsoft To Do**.
 
-**Clients:** `todo.sh` + text editor only.  No mobile or GUI app.
-**Sync target:** Microsoft To Do (single "Logbook" list).
+**Clients:** `todo.sh` + text editor (these addons), and typed clients such as
+the [mobilis](https://github.com/Sargasso-Labs/mobilis) Android app.  All
+clients share one contract: [`SPEC.md`](SPEC.md) plus the language-neutral
+[conformance suite](conformance/README.md).
+**Sync target:** backend-neutral adapters — Microsoft To Do (implemented,
+single "Logbook" list) and Google Tasks (specified, SPEC §3.8).
 
 ---
 
@@ -34,7 +38,8 @@ todo.sh lint
 
 ## Tests
 
-Run the full test suite (addon regression + everyday usage simulations) with:
+Run the full test suite (addon regression + everyday usage simulations +
+conformance cases) with:
 
 ```sh
 bash tests/run_all.sh
@@ -48,6 +53,9 @@ bash tests/test_addons.sh
 
 # Everyday usage simulation suite (GTD, subtasks, delegation, editor recovery, sync)
 bash tests/test_everyday_usage.sh
+
+# Conformance cases (conformance/cases/*.json) against the addons; needs jq
+bash tests/test_conformance.sh
 ```
 
 The tests use temporary todo directories and a stub Graph API client; they do
@@ -68,10 +76,16 @@ not make network requests or modify the user's todo files.
 │   └── sync                 [ADDON] Sync logbook ↔ Microsoft To Do
 ├── config/
 │   └── todo.cfg.example     Example shell configuration
+├── conformance/             Language-neutral test cases shared by all clients
+│   ├── README.md            Case format and runner rules
+│   ├── VERSION              Suite/spec version
+│   ├── schema.json          JSON Schema for case files
+│   └── cases/               parse, keys, canonical, lint
 └── tests/
     ├── run_all.sh           Master test suite runner
     ├── test_addons.sh       Unit/addon regression test suite
-    └── test_everyday_usage.sh Everyday usage simulation test suite
+    ├── test_everyday_usage.sh Everyday usage simulation test suite
+    └── test_conformance.sh  Conformance cases against the addons
 ```
 
 ## Key schema (todo.txt lines)

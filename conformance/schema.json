@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Sargasso-Labs/todo.txt-dsl/conformance/schema.json",
+  "title": "todo.txt DSL conformance case file",
+  "description": "Every file in conformance/cases/ is an array of cases. The file name selects the case shape.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["name", "input", "expect"],
+    "properties": {
+      "name": { "type": "string", "pattern": "^[a-z0-9_]+$", "description": "Unique within its file." },
+      "input": {},
+      "expect": {},
+      "xfail": {
+        "type": "object",
+        "description": "Known failures, keyed by client name (bash, mobilis, ...). The value is the reason.",
+        "additionalProperties": { "type": "string" }
+      }
+    },
+    "additionalProperties": false
+  },
+  "$defs": {
+    "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "nullableDate": { "oneOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] },
+    "token": {
+      "type": "object",
+      "required": ["kind", "text"],
+      "properties": {
+        "kind": { "enum": ["done", "completion_date", "priority", "creation_date", "text", "project", "context", "kv"] },
+        "text": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "parseCase": {
+      "description": "cases/parse.json — SPEC §1.0. input is one line (no newline).",
+      "properties": {
+        "input": { "type": "string" },
+        "expect": {
+          "type": "object",
+          "properties": {
+            "isTask": { "type": "boolean" },
+            "completed": { "type": "boolean" },
+            "completionDate": { "$ref": "#/$defs/nullableDate" },
+            "priority": { "oneOf": [{ "type": "string", "pattern": "^[A-Z]$" }, { "type": "null" }] },
+            "creationDate": { "$ref": "#/$defs/nullableDate" },
+            "description": { "type": "string" },
+            "projects": { "type": "array", "items": { "type": "string" } },
+            "contexts": { "type": "array", "items": { "type": "string" } },
+            "tokens": { "type": "array", "items": { "$ref": "#/$defs/token" } }
+          },
+          "required": ["isTask"]
+        }
+      }
+    },
+    "keysCase": {
+      "description": "cases/keys.json — SPEC §1.2. input is one line.",
+      "properties": {
+        "input": { "type": "string" },
+        "expect": {
+          "type": "object",
+          "required": ["fields", "extras", "diagnostics"],
+          "properties": {
+            "fields": {
+              "type": "object",
+              "properties": {
+                "id": { "type": ["integer", "null"] },
+                "parent": { "type": ["integer", "null"] },
+                "due": { "$ref": "#/$defs/nullableDate" },
+                "threshold": { "$ref": "#/$defs/nullableDate" },
+                "rem": { "type": ["string", "null"] },
+                "star": { "type": "boolean" },
+                "state": { "enum": ["next", "wait", "someday", "blocked", null] },
+                "wait": { "type": "array", "items": { "type": "string" } },
+                "myday": { "$ref": "#/$defs/nullableDate" },
+                "energy": { "enum": ["low", "med", "high", null] }
+              }
+            },
+            "extras": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["key", "value"],
+                "properties": { "key": { "type": "string" }, "value": { "type": "string" } }
+              }
+            },
+            "diagnostics": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["code", "key"],
+                "properties": { "code": { "enum": ["BAD_VALUE", "DUP_KEY"] }, "key": { "type": "string" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "canonicalCase": {
+      "description": "cases/canonical.json — SPEC §3.2. md5 is over the UTF-8 bytes of canonical, no trailing newline.",
+      "properties": {
+        "input": { "type": "string" },
+        "expect": {
+          "type": "object",
+          "required": ["canonical", "md5"],
+          "properties": {
+            "canonical": { "type": "string" },
+            "md5": { "type": "string", "pattern": "^[0-9a-f]{32}$" }
+          }
+        }
+      }
+    },
+    "listDir": {
+      "type": "object",
+      "required": ["idseq", "files"],
+      "properties": {
+        "idseq": { "type": "integer", "minimum": 0, "description": "Content of .idseq (last allocated id)." },
+        "files": {
+          "type": "object",
+          "properties": {
+            "todo.txt": { "type": "array", "items": { "type": "string" } },
+            "done.txt": { "type": "array", "items": { "type": "string" } }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "lintCase": {
+      "description": "cases/lint.json — SPEC §2.3 lint. Equivalent to `lint --orphans` (diagnostics) and `lint --fix --orphans` (fixed).",
+      "properties": {
+        "input": { "$ref": "#/$defs/listDir" },
+        "expect": {
+          "type": "object",
+          "required": ["diagnostics", "fixed"],
+          "properties": {
+            "diagnostics": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["file", "line", "code"],
+                "properties": {
+                  "file": { "type": "string" },
+                  "line": { "type": "integer", "minimum": 1 },
+                  "code": { "enum": ["MISSING_ID", "DUP_ID", "DANGLING_PARENT", "BAD_VALUE", "DUP_KEY"] },
+                  "key": { "type": "string" }
+                }
+              }
+            },
+            "fixed": { "$ref": "#/$defs/listDir" }
+          }
+        }
+      }
+    }
+  }
+}

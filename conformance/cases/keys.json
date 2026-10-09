@@ -1,0 +1,469 @@
+[
+  {
+    "name": "all_known_keys",
+    "input": "Write report due:2026-08-20 t:2026-08-15 rem:2026-08-19T0930 star:1 s:next wait:@alice myday:2026-08-18 e:high p:3 id:9",
+    "expect": {
+      "fields": {
+        "id": 9,
+        "parent": 3,
+        "due": "2026-08-20",
+        "threshold": "2026-08-15",
+        "rem": "2026-08-19T0930",
+        "star": true,
+        "state": "next",
+        "wait": [
+          "@alice"
+        ],
+        "myday": "2026-08-18",
+        "energy": "high"
+      },
+      "extras": [],
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "no_keys",
+    "input": "(A) Plain task +home @desk",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "leap_day_is_valid",
+    "input": "Renew passport due:2028-02-29",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": "2028-02-29",
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "bad_month",
+    "input": "Pay rent due:2026-13-01",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": [
+        {
+          "code": "BAD_VALUE",
+          "key": "due"
+        }
+      ]
+    }
+  },
+  {
+    "name": "bad_day",
+    "input": "Pay rent due:2026-02-30",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": [
+        {
+          "code": "BAD_VALUE",
+          "key": "due"
+        }
+      ]
+    }
+  },
+  {
+    "name": "bad_threshold_shape",
+    "input": "Start later t:2026-8-1",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": [
+        {
+          "code": "BAD_VALUE",
+          "key": "t"
+        }
+      ]
+    }
+  },
+  {
+    "name": "rem_bad_hour",
+    "input": "Call dentist rem:2026-08-09T2460",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": [
+        {
+          "code": "BAD_VALUE",
+          "key": "rem"
+        }
+      ]
+    }
+  },
+  {
+    "name": "rem_with_colon_is_not_a_kv",
+    "input": "Call dentist rem:2026-08-09T14:30",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "bad_state",
+    "input": "Read novel s:later",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": [
+        {
+          "code": "BAD_VALUE",
+          "key": "s"
+        }
+      ]
+    }
+  },
+  {
+    "name": "bad_energy",
+    "input": "Refactor parser e:medium",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": [
+        {
+          "code": "BAD_VALUE",
+          "key": "e"
+        }
+      ]
+    }
+  },
+  {
+    "name": "star_only_accepts_1",
+    "input": "Fancy task star:0",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": [
+        {
+          "code": "BAD_VALUE",
+          "key": "star"
+        }
+      ]
+    }
+  },
+  {
+    "name": "id_rejects_zero_and_leading_zero",
+    "input": "Odd ids id:0 p:007",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": [
+        {
+          "code": "BAD_VALUE",
+          "key": "id"
+        },
+        {
+          "code": "BAD_VALUE",
+          "key": "p"
+        }
+      ]
+    }
+  },
+  {
+    "name": "wait_requires_at_sign",
+    "input": "Chase invoice wait:alice",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": [
+        {
+          "code": "BAD_VALUE",
+          "key": "wait"
+        }
+      ]
+    }
+  },
+  {
+    "name": "duplicate_key_first_wins",
+    "input": "Pay rent due:2026-08-20 due:2026-09-01",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": "2026-08-20",
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": [
+        {
+          "code": "DUP_KEY",
+          "key": "due"
+        }
+      ]
+    }
+  },
+  {
+    "name": "duplicate_state",
+    "input": "Plan trip s:next s:someday",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": "next",
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": [
+        {
+          "code": "DUP_KEY",
+          "key": "s"
+        }
+      ]
+    }
+  },
+  {
+    "name": "invalid_then_valid_same_key",
+    "input": "Pay rent due:2026-13-01 due:2026-09-01",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": "2026-09-01",
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": [
+        {
+          "code": "BAD_VALUE",
+          "key": "due"
+        }
+      ]
+    }
+  },
+  {
+    "name": "multiple_wait_allowed",
+    "input": "Contract review s:wait wait:@alice wait:@legal",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": "wait",
+        "wait": [
+          "@alice",
+          "@legal"
+        ],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [],
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "unknown_keys_are_extras_in_order",
+    "input": "Read book pages:42 ref_id:abc-1 pages:43",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [
+        {
+          "key": "pages",
+          "value": "42"
+        },
+        {
+          "key": "ref_id",
+          "value": "abc-1"
+        },
+        {
+          "key": "pages",
+          "value": "43"
+        }
+      ],
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "keys_are_case_sensitive",
+    "input": "Pay rent DUE:2026-08-20",
+    "expect": {
+      "fields": {
+        "id": null,
+        "parent": null,
+        "due": null,
+        "threshold": null,
+        "rem": null,
+        "star": false,
+        "state": null,
+        "wait": [],
+        "myday": null,
+        "energy": null
+      },
+      "extras": [
+        {
+          "key": "DUE",
+          "value": "2026-08-20"
+        }
+      ],
+      "diagnostics": []
+    }
+  }
+]
