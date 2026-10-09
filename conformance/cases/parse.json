@@ -1,0 +1,1060 @@
+[
+  {
+    "name": "priority_projects_and_contexts",
+    "input": "(A) Inspect pressure valves +mobilis @engine",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": "A",
+      "creationDate": null,
+      "description": "Inspect pressure valves",
+      "projects": [
+        "+mobilis"
+      ],
+      "contexts": [
+        "@engine"
+      ],
+      "tokens": [
+        {
+          "kind": "priority",
+          "text": "(A)"
+        },
+        {
+          "kind": "text",
+          "text": "Inspect"
+        },
+        {
+          "kind": "text",
+          "text": "pressure"
+        },
+        {
+          "kind": "text",
+          "text": "valves"
+        },
+        {
+          "kind": "project",
+          "text": "+mobilis"
+        },
+        {
+          "kind": "context",
+          "text": "@engine"
+        }
+      ]
+    }
+  },
+  {
+    "name": "completed_and_completion_date",
+    "input": "x 2026-06-20 Patch outer hull plating anomalies +nautilus",
+    "expect": {
+      "isTask": true,
+      "completed": true,
+      "completionDate": "2026-06-20",
+      "priority": null,
+      "creationDate": null,
+      "description": "Patch outer hull plating anomalies",
+      "projects": [
+        "+nautilus"
+      ],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "done",
+          "text": "x"
+        },
+        {
+          "kind": "completion_date",
+          "text": "2026-06-20"
+        },
+        {
+          "kind": "text",
+          "text": "Patch"
+        },
+        {
+          "kind": "text",
+          "text": "outer"
+        },
+        {
+          "kind": "text",
+          "text": "hull"
+        },
+        {
+          "kind": "text",
+          "text": "plating"
+        },
+        {
+          "kind": "text",
+          "text": "anomalies"
+        },
+        {
+          "kind": "project",
+          "text": "+nautilus"
+        }
+      ]
+    }
+  },
+  {
+    "name": "creation_date",
+    "input": "(A) 2026-07-01 Chart the Sargasso currents @nav",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": "A",
+      "creationDate": "2026-07-01",
+      "description": "Chart the Sargasso currents",
+      "projects": [],
+      "contexts": [
+        "@nav"
+      ],
+      "tokens": [
+        {
+          "kind": "priority",
+          "text": "(A)"
+        },
+        {
+          "kind": "creation_date",
+          "text": "2026-07-01"
+        },
+        {
+          "kind": "text",
+          "text": "Chart"
+        },
+        {
+          "kind": "text",
+          "text": "the"
+        },
+        {
+          "kind": "text",
+          "text": "Sargasso"
+        },
+        {
+          "kind": "text",
+          "text": "currents"
+        },
+        {
+          "kind": "context",
+          "text": "@nav"
+        }
+      ]
+    }
+  },
+  {
+    "name": "completion_and_creation_dates",
+    "input": "x 2026-07-10 2026-07-01 Refit ballast pumps",
+    "expect": {
+      "isTask": true,
+      "completed": true,
+      "completionDate": "2026-07-10",
+      "priority": null,
+      "creationDate": "2026-07-01",
+      "description": "Refit ballast pumps",
+      "projects": [],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "done",
+          "text": "x"
+        },
+        {
+          "kind": "completion_date",
+          "text": "2026-07-10"
+        },
+        {
+          "kind": "creation_date",
+          "text": "2026-07-01"
+        },
+        {
+          "kind": "text",
+          "text": "Refit"
+        },
+        {
+          "kind": "text",
+          "text": "ballast"
+        },
+        {
+          "kind": "text",
+          "text": "pumps"
+        }
+      ]
+    }
+  },
+  {
+    "name": "priority_b_roundtrip",
+    "input": "(B) Calibrate dynamic depth sensors +mobilis @bridge",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": "B",
+      "creationDate": null,
+      "description": "Calibrate dynamic depth sensors",
+      "projects": [
+        "+mobilis"
+      ],
+      "contexts": [
+        "@bridge"
+      ],
+      "tokens": [
+        {
+          "kind": "priority",
+          "text": "(B)"
+        },
+        {
+          "kind": "text",
+          "text": "Calibrate"
+        },
+        {
+          "kind": "text",
+          "text": "dynamic"
+        },
+        {
+          "kind": "text",
+          "text": "depth"
+        },
+        {
+          "kind": "text",
+          "text": "sensors"
+        },
+        {
+          "kind": "project",
+          "text": "+mobilis"
+        },
+        {
+          "kind": "context",
+          "text": "@bridge"
+        }
+      ]
+    }
+  },
+  {
+    "name": "completed_dates_and_tags_roundtrip",
+    "input": "x 2026-07-10 2026-07-01 Refit ballast pumps +nautilus @dock",
+    "expect": {
+      "isTask": true,
+      "completed": true,
+      "completionDate": "2026-07-10",
+      "priority": null,
+      "creationDate": "2026-07-01",
+      "description": "Refit ballast pumps",
+      "projects": [
+        "+nautilus"
+      ],
+      "contexts": [
+        "@dock"
+      ],
+      "tokens": [
+        {
+          "kind": "done",
+          "text": "x"
+        },
+        {
+          "kind": "completion_date",
+          "text": "2026-07-10"
+        },
+        {
+          "kind": "creation_date",
+          "text": "2026-07-01"
+        },
+        {
+          "kind": "text",
+          "text": "Refit"
+        },
+        {
+          "kind": "text",
+          "text": "ballast"
+        },
+        {
+          "kind": "text",
+          "text": "pumps"
+        },
+        {
+          "kind": "project",
+          "text": "+nautilus"
+        },
+        {
+          "kind": "context",
+          "text": "@dock"
+        }
+      ]
+    }
+  },
+  {
+    "name": "creation_date_without_priority",
+    "input": "2026-07-01 Plan the voyage",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": "2026-07-01",
+      "description": "Plan the voyage",
+      "projects": [],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "creation_date",
+          "text": "2026-07-01"
+        },
+        {
+          "kind": "text",
+          "text": "Plan"
+        },
+        {
+          "kind": "text",
+          "text": "the"
+        },
+        {
+          "kind": "text",
+          "text": "voyage"
+        }
+      ]
+    }
+  },
+  {
+    "name": "tags_mid_line_keep_position",
+    "input": "Call +acme about @phone the invoice",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "Call about the invoice",
+      "projects": [
+        "+acme"
+      ],
+      "contexts": [
+        "@phone"
+      ],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "Call"
+        },
+        {
+          "kind": "project",
+          "text": "+acme"
+        },
+        {
+          "kind": "text",
+          "text": "about"
+        },
+        {
+          "kind": "context",
+          "text": "@phone"
+        },
+        {
+          "kind": "text",
+          "text": "the"
+        },
+        {
+          "kind": "text",
+          "text": "invoice"
+        }
+      ]
+    }
+  },
+  {
+    "name": "repeated_spaces_preserved_in_raw",
+    "input": "Buy  milk   +home",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "Buy milk",
+      "projects": [
+        "+home"
+      ],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "Buy"
+        },
+        {
+          "kind": "text",
+          "text": "milk"
+        },
+        {
+          "kind": "project",
+          "text": "+home"
+        }
+      ]
+    }
+  },
+  {
+    "name": "done_without_dates",
+    "input": "x Feed the cat",
+    "expect": {
+      "isTask": true,
+      "completed": true,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "Feed the cat",
+      "projects": [],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "done",
+          "text": "x"
+        },
+        {
+          "kind": "text",
+          "text": "Feed"
+        },
+        {
+          "kind": "text",
+          "text": "the"
+        },
+        {
+          "kind": "text",
+          "text": "cat"
+        }
+      ]
+    }
+  },
+  {
+    "name": "uppercase_X_is_text",
+    "input": "X marks the spot",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "X marks the spot",
+      "projects": [],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "X"
+        },
+        {
+          "kind": "text",
+          "text": "marks"
+        },
+        {
+          "kind": "text",
+          "text": "the"
+        },
+        {
+          "kind": "text",
+          "text": "spot"
+        }
+      ]
+    }
+  },
+  {
+    "name": "x_prefix_word_is_text",
+    "input": "xylophone lesson @music",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "xylophone lesson",
+      "projects": [],
+      "contexts": [
+        "@music"
+      ],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "xylophone"
+        },
+        {
+          "kind": "text",
+          "text": "lesson"
+        },
+        {
+          "kind": "context",
+          "text": "@music"
+        }
+      ]
+    }
+  },
+  {
+    "name": "lowercase_priority_is_text",
+    "input": "(a) not a priority",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "(a) not a priority",
+      "projects": [],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "(a)"
+        },
+        {
+          "kind": "text",
+          "text": "not"
+        },
+        {
+          "kind": "text",
+          "text": "a"
+        },
+        {
+          "kind": "text",
+          "text": "priority"
+        }
+      ]
+    }
+  },
+  {
+    "name": "priority_not_first_is_text",
+    "input": "Call mom (A)",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "Call mom (A)",
+      "projects": [],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "Call"
+        },
+        {
+          "kind": "text",
+          "text": "mom"
+        },
+        {
+          "kind": "text",
+          "text": "(A)"
+        }
+      ]
+    }
+  },
+  {
+    "name": "priority_after_done_is_text",
+    "input": "x 2026-07-10 (A) Ship it",
+    "expect": {
+      "isTask": true,
+      "completed": true,
+      "completionDate": "2026-07-10",
+      "priority": null,
+      "creationDate": null,
+      "description": "(A) Ship it",
+      "projects": [],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "done",
+          "text": "x"
+        },
+        {
+          "kind": "completion_date",
+          "text": "2026-07-10"
+        },
+        {
+          "kind": "text",
+          "text": "(A)"
+        },
+        {
+          "kind": "text",
+          "text": "Ship"
+        },
+        {
+          "kind": "text",
+          "text": "it"
+        }
+      ]
+    }
+  },
+  {
+    "name": "leading_space_disables_prefix",
+    "input": " (A) 2026-07-01 Indented line",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "(A) 2026-07-01 Indented line",
+      "projects": [],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "(A)"
+        },
+        {
+          "kind": "text",
+          "text": "2026-07-01"
+        },
+        {
+          "kind": "text",
+          "text": "Indented"
+        },
+        {
+          "kind": "text",
+          "text": "line"
+        }
+      ]
+    }
+  },
+  {
+    "name": "malformed_prefix_date_is_text",
+    "input": "2026-7-1 Plan trip",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "2026-7-1 Plan trip",
+      "projects": [],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "2026-7-1"
+        },
+        {
+          "kind": "text",
+          "text": "Plan"
+        },
+        {
+          "kind": "text",
+          "text": "trip"
+        }
+      ]
+    }
+  },
+  {
+    "name": "lone_sigils_are_text",
+    "input": "Use + and @ signs",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "Use + and @ signs",
+      "projects": [],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "Use"
+        },
+        {
+          "kind": "text",
+          "text": "+"
+        },
+        {
+          "kind": "text",
+          "text": "and"
+        },
+        {
+          "kind": "text",
+          "text": "@"
+        },
+        {
+          "kind": "text",
+          "text": "signs"
+        }
+      ]
+    }
+  },
+  {
+    "name": "email_is_text",
+    "input": "Mail bob@example.com +admin",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "Mail bob@example.com",
+      "projects": [
+        "+admin"
+      ],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "Mail"
+        },
+        {
+          "kind": "text",
+          "text": "bob@example.com"
+        },
+        {
+          "kind": "project",
+          "text": "+admin"
+        }
+      ]
+    }
+  },
+  {
+    "name": "project_with_colon_is_project",
+    "input": "Ship +app:v2 today",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "Ship today",
+      "projects": [
+        "+app:v2"
+      ],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "Ship"
+        },
+        {
+          "kind": "project",
+          "text": "+app:v2"
+        },
+        {
+          "kind": "text",
+          "text": "today"
+        }
+      ]
+    }
+  },
+  {
+    "name": "url_is_text",
+    "input": "Review API issue https://github.com/todotxt/todo.txt-cli/issues/123?sort=asc&filter=open @github",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "Review API issue https://github.com/todotxt/todo.txt-cli/issues/123?sort=asc&filter=open",
+      "projects": [],
+      "contexts": [
+        "@github"
+      ],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "Review"
+        },
+        {
+          "kind": "text",
+          "text": "API"
+        },
+        {
+          "kind": "text",
+          "text": "issue"
+        },
+        {
+          "kind": "text",
+          "text": "https://github.com/todotxt/todo.txt-cli/issues/123?sort=asc&filter=open"
+        },
+        {
+          "kind": "context",
+          "text": "@github"
+        }
+      ]
+    }
+  },
+  {
+    "name": "non_key_colons_are_text",
+    "input": "Fix panic in auth/jwt.go:142 (re: expired token) +auth @backend",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "Fix panic in auth/jwt.go:142 (re: expired token)",
+      "projects": [
+        "+auth"
+      ],
+      "contexts": [
+        "@backend"
+      ],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "Fix"
+        },
+        {
+          "kind": "text",
+          "text": "panic"
+        },
+        {
+          "kind": "text",
+          "text": "in"
+        },
+        {
+          "kind": "text",
+          "text": "auth/jwt.go:142"
+        },
+        {
+          "kind": "text",
+          "text": "(re:"
+        },
+        {
+          "kind": "text",
+          "text": "expired"
+        },
+        {
+          "kind": "text",
+          "text": "token)"
+        },
+        {
+          "kind": "project",
+          "text": "+auth"
+        },
+        {
+          "kind": "context",
+          "text": "@backend"
+        }
+      ]
+    }
+  },
+  {
+    "name": "quotes_and_ampersand",
+    "input": "Discuss \"Q3 Targets & Hiring\" with team +strategy",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "Discuss \"Q3 Targets & Hiring\" with team",
+      "projects": [
+        "+strategy"
+      ],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "Discuss"
+        },
+        {
+          "kind": "text",
+          "text": "\"Q3"
+        },
+        {
+          "kind": "text",
+          "text": "Targets"
+        },
+        {
+          "kind": "text",
+          "text": "&"
+        },
+        {
+          "kind": "text",
+          "text": "Hiring\""
+        },
+        {
+          "kind": "text",
+          "text": "with"
+        },
+        {
+          "kind": "text",
+          "text": "team"
+        },
+        {
+          "kind": "project",
+          "text": "+strategy"
+        }
+      ]
+    }
+  },
+  {
+    "name": "capture_priority_date_id",
+    "input": "(A) 2026-10-10 Urgent server hotfix +ops id:5",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": "A",
+      "creationDate": "2026-10-10",
+      "description": "Urgent server hotfix",
+      "projects": [
+        "+ops"
+      ],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "priority",
+          "text": "(A)"
+        },
+        {
+          "kind": "creation_date",
+          "text": "2026-10-10"
+        },
+        {
+          "kind": "text",
+          "text": "Urgent"
+        },
+        {
+          "kind": "text",
+          "text": "server"
+        },
+        {
+          "kind": "text",
+          "text": "hotfix"
+        },
+        {
+          "kind": "project",
+          "text": "+ops"
+        },
+        {
+          "kind": "kv",
+          "text": "id:5"
+        }
+      ]
+    }
+  },
+  {
+    "name": "delegation_wait_is_not_a_context",
+    "input": "Get budget sign-off s:wait wait:@alice +finance id:12",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "Get budget sign-off",
+      "projects": [
+        "+finance"
+      ],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "Get"
+        },
+        {
+          "kind": "text",
+          "text": "budget"
+        },
+        {
+          "kind": "text",
+          "text": "sign-off"
+        },
+        {
+          "kind": "kv",
+          "text": "s:wait"
+        },
+        {
+          "kind": "kv",
+          "text": "wait:@alice"
+        },
+        {
+          "kind": "project",
+          "text": "+finance"
+        },
+        {
+          "kind": "kv",
+          "text": "id:12"
+        }
+      ]
+    }
+  },
+  {
+    "name": "subtask_parent_link",
+    "input": "Upload Google Play bundle +mobile p:7 id:12",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "Upload Google Play bundle",
+      "projects": [
+        "+mobile"
+      ],
+      "contexts": [],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "Upload"
+        },
+        {
+          "kind": "text",
+          "text": "Google"
+        },
+        {
+          "kind": "text",
+          "text": "Play"
+        },
+        {
+          "kind": "text",
+          "text": "bundle"
+        },
+        {
+          "kind": "project",
+          "text": "+mobile"
+        },
+        {
+          "kind": "kv",
+          "text": "p:7"
+        },
+        {
+          "kind": "kv",
+          "text": "id:12"
+        }
+      ]
+    }
+  },
+  {
+    "name": "tab_separator",
+    "input": "Water\tplants @home",
+    "expect": {
+      "isTask": true,
+      "completed": false,
+      "completionDate": null,
+      "priority": null,
+      "creationDate": null,
+      "description": "Water plants",
+      "projects": [],
+      "contexts": [
+        "@home"
+      ],
+      "tokens": [
+        {
+          "kind": "text",
+          "text": "Water"
+        },
+        {
+          "kind": "text",
+          "text": "plants"
+        },
+        {
+          "kind": "context",
+          "text": "@home"
+        }
+      ]
+    }
+  },
+  {
+    "name": "empty_line_is_not_a_task",
+    "input": "",
+    "expect": {
+      "isTask": false
+    }
+  },
+  {
+    "name": "whitespace_line_is_not_a_task",
+    "input": "   ",
+    "expect": {
+      "isTask": false
+    }
+  }
+]

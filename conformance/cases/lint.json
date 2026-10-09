@@ -1,0 +1,79 @@
+[
+  {
+    "name": "clean_list",
+    "input": { "idseq": 2, "files": { "todo.txt": ["Plan launch id:1", "Write copy p:1 id:2"] } },
+    "expect": {
+      "diagnostics": [],
+      "fixed": { "idseq": 2, "files": { "todo.txt": ["Plan launch id:1", "Write copy p:1 id:2"] } }
+    }
+  },
+  {
+    "name": "missing_ids_backfilled_in_line_order",
+    "input": { "idseq": 1, "files": { "todo.txt": ["Plan launch id:1", "Pasted task", "Another pasted +home"] } },
+    "expect": {
+      "diagnostics": [
+        { "file": "todo.txt", "line": 2, "code": "MISSING_ID" },
+        { "file": "todo.txt", "line": 3, "code": "MISSING_ID" }
+      ],
+      "fixed": { "idseq": 3, "files": { "todo.txt": ["Plan launch id:1", "Pasted task id:2", "Another pasted +home id:3"] } }
+    }
+  },
+  {
+    "name": "duplicate_id_later_occurrence_reassigned",
+    "input": { "idseq": 4, "files": { "todo.txt": ["First id:4", "Second id:4 due:2026-08-20"] } },
+    "expect": {
+      "diagnostics": [ { "file": "todo.txt", "line": 2, "code": "DUP_ID" } ],
+      "fixed": { "idseq": 5, "files": { "todo.txt": ["First id:4", "Second id:5 due:2026-08-20"] } }
+    }
+  },
+  {
+    "name": "dangling_parent_removed",
+    "input": { "idseq": 2, "files": { "todo.txt": ["Orphan child p:99 id:2"] } },
+    "expect": {
+      "diagnostics": [ { "file": "todo.txt", "line": 1, "code": "DANGLING_PARENT" } ],
+      "fixed": { "idseq": 2, "files": { "todo.txt": ["Orphan child id:2"] } }
+    }
+  },
+  {
+    "name": "archived_parent_is_not_an_orphan",
+    "input": {
+      "idseq": 2,
+      "files": { "todo.txt": ["Child step p:1 id:2"], "done.txt": ["x 2026-08-01 Parent milestone id:1"] }
+    },
+    "expect": {
+      "diagnostics": [],
+      "fixed": { "idseq": 2, "files": { "todo.txt": ["Child step p:1 id:2"], "done.txt": ["x 2026-08-01 Parent milestone id:1"] } }
+    }
+  },
+  {
+    "name": "blank_lines_preserved",
+    "input": { "idseq": 2, "files": { "todo.txt": ["One id:1", "", "Two id:2"] } },
+    "expect": {
+      "diagnostics": [],
+      "fixed": { "idseq": 2, "files": { "todo.txt": ["One id:1", "", "Two id:2"] } }
+    }
+  },
+  {
+    "name": "missing_id_and_dangling_parent_on_same_line",
+    "input": { "idseq": 0, "files": { "todo.txt": ["Child p:50"] } },
+    "expect": {
+      "diagnostics": [
+        { "file": "todo.txt", "line": 1, "code": "MISSING_ID" },
+        { "file": "todo.txt", "line": 1, "code": "DANGLING_PARENT" }
+      ],
+      "fixed": { "idseq": 1, "files": { "todo.txt": ["Child id:1"] } }
+    }
+  },
+  {
+    "name": "value_errors_reported_not_fixed",
+    "input": { "idseq": 1, "files": { "todo.txt": ["Pay rent due:2026-13-01 s:later id:1"] } },
+    "expect": {
+      "diagnostics": [
+        { "file": "todo.txt", "line": 1, "code": "BAD_VALUE", "key": "due" },
+        { "file": "todo.txt", "line": 1, "code": "BAD_VALUE", "key": "s" }
+      ],
+      "fixed": { "idseq": 1, "files": { "todo.txt": ["Pay rent due:2026-13-01 s:later id:1"] } }
+    },
+    "xfail": { "bash": "addons/lint does not validate key values yet" }
+  }
+]

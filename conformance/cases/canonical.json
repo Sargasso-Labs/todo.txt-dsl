@@ -1,0 +1,99 @@
+[
+  {
+    "name": "plain_text",
+    "input": "Buy milk +home @store",
+    "expect": {
+      "canonical": "Buy milk +home @store",
+      "md5": "64790a3842cb0b9fbdff6cbcc4c35970"
+    }
+  },
+  {
+    "name": "strips_id",
+    "input": "Buy milk +home id:4",
+    "expect": {
+      "canonical": "Buy milk +home",
+      "md5": "71aad091919a42ffbedff497fbac91ba"
+    }
+  },
+  {
+    "name": "keeps_star",
+    "input": "Buy milk star:1 id:4",
+    "expect": {
+      "canonical": "Buy milk star:1",
+      "md5": "556ae999f3284e0f25b74a6497087681"
+    },
+    "xfail": {
+      "bash": "addons/sync strips star: (SPEC v0.1 §3.2 step 2); v0.2 keeps it (DL-10)"
+    }
+  },
+  {
+    "name": "sorts_kv_tokens",
+    "input": "Write spec s:next due:2026-08-12 id:7",
+    "expect": {
+      "canonical": "Write spec due:2026-08-12 s:next",
+      "md5": "01337570a2d9adb06f1ec2f3dfe13e78"
+    },
+    "xfail": {
+      "bash": "addons/sync does not sort key:value tokens"
+    }
+  },
+  {
+    "name": "sorted_input_same_hash",
+    "input": "Write spec due:2026-08-12 s:next id:7",
+    "expect": {
+      "canonical": "Write spec due:2026-08-12 s:next",
+      "md5": "01337570a2d9adb06f1ec2f3dfe13e78"
+    }
+  },
+  {
+    "name": "normalises_whitespace",
+    "input": "Buy   milk  +home",
+    "expect": {
+      "canonical": "Buy milk +home",
+      "md5": "71aad091919a42ffbedff497fbac91ba"
+    }
+  },
+  {
+    "name": "moves_mid_line_kv_after_text",
+    "input": "Call due:2026-08-20 the bank id:2",
+    "expect": {
+      "canonical": "Call the bank due:2026-08-20",
+      "md5": "162a0c81cf22964a6cacbac15d569239"
+    },
+    "xfail": {
+      "bash": "addons/sync does not sort key:value tokens"
+    }
+  },
+  {
+    "name": "keeps_priority_and_creation_date",
+    "input": "(A) 2026-08-01 Pay rent due:2026-08-05 id:3",
+    "expect": {
+      "canonical": "(A) 2026-08-01 Pay rent due:2026-08-05",
+      "md5": "cf71cc09b852ec03199dd32bcd6f55e6"
+    }
+  },
+  {
+    "name": "keeps_completion_prefix",
+    "input": "x 2026-08-06 2026-08-01 Pay rent due:2026-08-05 id:3",
+    "expect": {
+      "canonical": "x 2026-08-06 2026-08-01 Pay rent due:2026-08-05",
+      "md5": "098b69924a686e1ea283b2f2e0fdf42e"
+    }
+  },
+  {
+    "name": "url_stays_in_text",
+    "input": "See https://example.com/a?b=c id:2",
+    "expect": {
+      "canonical": "See https://example.com/a?b=c",
+      "md5": "bbd88ccbce205cad0940969679b622ba"
+    }
+  },
+  {
+    "name": "unicode_text",
+    "input": "Café com açúcar +casa id:8",
+    "expect": {
+      "canonical": "Café com açúcar +casa",
+      "md5": "a3694182bf2b033d81e208f9854d05d9"
+    }
+  }
+]

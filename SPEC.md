@@ -1,8 +1,11 @@
 # todo.txt DSL Specification
 
-> **Status:** v0.1 — 2026-08-09
-> **Clients:** `todo.sh` + text editor only.  No mobile or GUI app.
-> **Sync target:** Microsoft To Do (single list).  Google Tasks: future, not specified.
+> **Status:** v0.2 — 2026-10-10 (v0.1 — 2026-08-09)
+> **Clients:** `todo.sh` + text editor (addons in this repo); typed clients
+> such as the [mobilis](https://github.com/Sargasso-Labs/mobilis) Android app.
+> Every client proves conformance with [`conformance/`](conformance/README.md) (DL-11).
+> **Sync target:** backend-neutral (§3.0).  Adapter 1: Microsoft To Do
+> (implemented, `addons/sync`).  Adapter 2: Google Tasks (specified, §3.8).
 > **Ground rules** are in the problem statement and are not repeated here; they
 > are enforced silently throughout.
 
@@ -57,6 +60,48 @@ For each DSL key, whether its value is **native** (a first-class To Do field),
 
 ## Part 1 — Core Schema
 
+### 1.0 Line Grammar
+
+*Normative.  Pinned by `conformance/cases/parse.json`.*
+
+A file is a sequence of lines separated by `\n`.  A line that is empty or
+contains only spaces/tabs is **not a task**; clients MAY drop such lines when
+rewriting a file.
+
+**Tokens.**  A task line is split into tokens on runs of space (U+0020) or
+tab (U+0009).  Separator runs are not tokens, but a client that writes a line
+it did not edit MUST reproduce it byte for byte (lossless round trip).
+
+**Prefix.**  Prefix fields are recognised only when the line does not start
+with whitespace, and only in this order:
+
+| Form | Tokens, in order |
+|---|---|
+| Completed | `x`, then optional completion date, then optional creation date (only if a completion date is present) |
+| Open | optional priority `(A)`–`(Z)`, then optional creation date |
+
+A date is any token of the shape `NNNN-NN-NN` (digits); prefix dates are not
+calendar-checked.  A priority after `x` is plain text (todo.sh removes
+priorities on `do`).  `X`, `(a)` and a priority anywhere else are plain text.
+
+**Body tokens** are classified in this order:
+
+1. `+` followed by at least one character → **project** (the sigil wins, so `+app:v2` is a project).
+2. `@` followed by at least one character → **context**.
+3. Matches `^[A-Za-z][A-Za-z0-9_-]*:[^\s:]+$` and the value does not start
+   with `//` → **key:value**.  The key is case-sensitive; the value is
+   non-empty and contains no colon.  So `due:2026-08-20` and `wait:@alice`
+   are key:values; `https://x`, `auth/jwt.go:142`, `re:` and
+   `rem:2026-08-09T14:30` are text.
+4. Anything else → **text**.
+
+A key:value is never a context: `wait:@alice` does not add `@alice` to the
+context list.
+
+**Derived fields.**  `description` is the text tokens joined by a single
+space.  `projects` and `contexts` keep their sigils and their order of
+appearance, duplicates included.
+
 ### 1.1 Resolved Collisions
 
 #### 1.1.1 MyDay as a Project
@@ -104,7 +149,27 @@ touched by sync.
 ### 1.2 Key Set
 
 All keys follow the todo.txt `key:value` rule: the value **must not contain
-spaces**.  Violations are rejected by the `lint` addon, not silently ignored.
+spaces** (or colons; §1.0).  A token that breaks the rule is not a key:value
+at all — it is text.
+
+**Value validation** (*pinned by `conformance/cases/keys.json`*).  A
+key:value whose key is known but whose value is invalid stays on the line
+untouched, does not set the field, and is reported as `BAD_VALUE`:
+
+| Key | Valid values | Repeats |
+|---|---|---|
+| `id`, `p` | positive integer without leading zeros (`^[1-9][0-9]*$`) | once |
+| `due`, `t`, `myday` | calendar-valid `YYYY-MM-DD` | once |
+| `rem` | calendar-valid `YYYY-MM-DD` + `T` + `HHMM` (`00`–`23`, `00`–`59`) | once |
+| `star` | `1` | once |
+| `s` | `next`, `wait`, `someday`, `blocked` | once |
+| `e` | `low`, `med`, `high` | once |
+| `wait` | `@` followed by at least one character | **many** |
+
+For keys marked *once*, the first valid occurrence wins and each later valid
+occurrence is reported as `DUP_KEY` (so `s:next s:someday` is `state=next`
+plus `DUP_KEY s`).  Unknown keys are kept, in order, as extras; clients MUST
+preserve them.
 
 #### 1.2.1 Identity & Structure
 
@@ -273,6 +338,34 @@ key with complex value); recurrence state survives sync restarts; a recurring
 task completing in To Do is handled as a new remote task on the next pull (see
 §3.3).
 
+**DL-9: Line grammar is normative.**
+Options: leave tokenisation to each client; define it in prose only; define
+it in prose plus executable cases.
+Choice: §1.0 plus `conformance/cases/parse.json`.
+Consequence: URLs, file:line references and `re:` stay text in every client;
+`wait:@x` is a key:value, never a context; a priority after `x` is text.
+
+**DL-10: `star:` is part of the canonical hash.**
+Options: strip `star:` (v0.1, to avoid double-counting with `importance`);
+keep it.
+Choice: keep it.
+Consequence: a star-only local edit now changes the hash and is pushed.  The
+v0.1 worry does not apply because importance is projected *from* the line;
+there is nothing to double-count.  One-time re-push on upgrade (§3.2).
+
+**DL-11: Conformance suite as the contract.**
+Options: one shared library; spec prose only; spec plus language-neutral cases.
+Choice: `conformance/` with JSON cases and per-client `xfail`.
+Consequence: clients in different languages (bash, Kotlin, Vala) stay
+independent and fast, and agree because they pass the same cases.
+
+**DL-12: Backend-neutral sync; mapping never on the line.**
+Options: inline remote-ID keys such as `gtaskid:<id>`; per-backend sync
+engines; one engine with adapters and an out-of-line map.
+Choice: adapters (§3.0) and `map.tsv` with a `backend` column.
+Consequence: the task line stays portable between backends and clients;
+switching backend is a map rebuild, not a file rewrite.
+
 ---
 
 ## Pattern Index
@@ -416,7 +509,21 @@ For each, prompts: `(n)ext (s)omeday (d)ue=YYYY-MM-DD (p)roject (skip)`.
 
 #### `lint` [ADDON]
 
-See §1 D11 and Pattern P03.  Full specification in §4.
+See Pattern P03 for behaviour and §4 for the full pattern.  Diagnostics use
+stable codes so that every client reports the same problem the same way
+(*pinned by `conformance/cases/lint.json`*):
+
+| Code | Scope | Meaning | `--fix` |
+|---|---|---|---|
+| `MISSING_ID` | line | task line has no `id:` | append ` id:<next>` from `.idseq` |
+| `DUP_ID` | file set | a later line reuses an `id:` | give the later line ` id:<next>` |
+| `DANGLING_PARENT` | file set | `p:<n>` resolves to no line in any scanned `todo.txt`/`done.txt` (requires `--orphans`) | remove the ` p:<n>` token |
+| `BAD_VALUE` | line | known key with an invalid value (§1.2) | none — reported only |
+| `DUP_KEY` | line | single-valued key repeated (§1.2) | none — reported only |
+
+Fixes are applied in line order (backfill, then duplicate reassignment, then
+`p:` removal), so new IDs are allocated top to bottom.  Blank lines are
+preserved.
 
 #### `resolve` [ADDON]
 
@@ -425,6 +532,53 @@ See D11 and Pattern P02.  Full specification in §4.
 ---
 
 ## Part 3 — Sync Layer
+
+### 3.0 Backend-Neutral Model
+
+The DSL owns the task line; a **sync adapter** owns one remote list on one
+backend.  Everything in this Part that is not marked *Adapter 1* or
+*Adapter 2* applies to every adapter: change detection (§3.1–3.2), the D8
+reconciliation (§3.3), the deletion threshold (§3.4) and the conflict policy
+(§3.5).
+
+**Adapter contract.**  An adapter provides five operations; the engine never
+calls a backend API directly:
+
+| Operation | Returns | Notes |
+|---|---|---|
+| `delta(cursor)` | changed tasks, removed remote IDs, next cursor | `cursor` empty → full snapshot |
+| `create(fields)` | remote ID | |
+| `patch(remote_id, fields)` | — | only fields the backend supports |
+| `delete(remote_id)` | — | |
+| `capabilities` | the row of the table below | static |
+
+`fields` is the projection of a task line onto the backend, as described by
+the adapter's row in the capability table:
+
+| Capability | Adapter 1: Microsoft To Do | Adapter 2: Google Tasks |
+|---|---|---|
+| Title | `title` | `title` |
+| Raw line carried in notes | no (v0.1 behaviour) | **yes** — `notes` holds the full line |
+| `x` / completion date | `status`, `completedDateTime` | `status`, `completed` |
+| `due:` | `dueDateTime` (UTC midnight) | `due` (date only; time discarded by the API) |
+| `rem:` | `reminderDateTime` | — dropped |
+| `star:1` | `importance: high` | — dropped |
+| `p:` | — dropped | `parent` (native subtasks, one level) |
+| Remote ID alphabet | GUID | opaque string |
+| Delta | `/tasks/delta` + `deltaLink` | `tasks.list?updatedMin=` + `showDeleted=true` |
+
+**Mapping table.**  The link between a line and its remote copy **never
+appears on the task line** (DL-12).  It is kept per list in
+`<list>/.sync/map.tsv`, one row per synced task:
+
+```
+local_id <TAB> backend <TAB> remote_id <TAB> last_hash <TAB> state
+```
+
+`backend` is `msft` or `gtasks`.  *Migration:* a 4-column v0.1 row
+(`local_id msft_id last_hash state`) is read as `backend=msft`.  A client that
+cannot use the file system layout (for example a mobile app) MAY keep the same
+table in its own storage, but MUST key it by `id:`.
 
 ### 3.1 Change Detection Without mtimes
 
@@ -440,20 +594,30 @@ compared to the stored hash.  A mismatch means a local edit.
 The hash input is a canonical string derived from the task line by applying
 these transformations in order, then passing the result to `md5sum`:
 
-1. **Strip the `id:` key.**  It carries no content; its presence is assumed.
-2. **Strip the `star:` key.**  It is synced via `importance`; hashing it
-   separately would double-count it.
-3. **Normalise whitespace.**  Collapse runs of spaces to a single space; trim
-   leading and trailing spaces.
-4. **Sort remaining `key:value` tokens lexicographically,** leaving the
-   human-readable text (everything that is not a `key:value` token, `(X)`,
-   `x `, or a date field) in its original position.
-5. **Hash the result with `md5sum`.**
+*Normative as of v0.2.  Pinned by `conformance/cases/canonical.json`.*
 
-Rationale: sorting keys means that `due:2026-08-10 s:next` and
-`s:next due:2026-08-10` produce the same hash, so an editor that reorders keys
-does not appear as an edit to the sync engine.  Stripping `id:` and `star:`
-prevents those fields from triggering spurious hash mismatches.
+1. **Tokenise** the line per §1.0 (this also normalises whitespace).
+2. **Drop every `id:` key:value.**  It carries no content; its presence is assumed.
+3. **Keep `star:`.**  A local star toggle is a real edit that must be pushed
+   as `importance` (DL-10).  *(v0.1 stripped it, so star-only edits were never
+   detected.)*
+4. **Reassemble** as: prefix tokens in order (`x`, dates, priority), then
+   text/project/context tokens in their original order, then the remaining
+   key:value tokens **sorted by byte value**, all joined by a single space.
+5. **Hash** the UTF-8 bytes of the result, with no trailing newline, using MD5.
+
+Rationale: sorting and moving key:values to the end means that
+`due:2026-08-10 s:next`, `s:next due:2026-08-10` and a key moved to the middle
+of the text all produce the same hash, so an editor that reorders keys does
+not appear as an edit to the sync engine.
+
+**Migration from v0.1 hashes.**  Stored `last_hash` values computed with the
+v0.1 rules will mismatch for lines that contain `star:` or unsorted keys.  On
+the first v0.2 run such lines look locally changed and are pushed once; the
+push is idempotent.  `addons/sync` still implements the v0.1 rules — see the
+`xfail` entries in `canonical.json`.
+
+The v0.1 sample implementation, kept for reference:
 
 ```sh
 canonical() {
@@ -570,6 +734,9 @@ When both the local line and the remote task have changed since `last_hash`:
 
 ### 3.6 Secrets
 
+*Adapter 1 (Microsoft To Do).  Adapter 2 clients use their platform's
+credential store; secrets never live under `~/.todo/` or in the task line.*
+
 OAuth tokens (client ID, client secret, access token, refresh token) **must
 not** be stored under `~/.todo/` if any part of that tree is version-controlled
 (e.g. Dropbox, git, Nextcloud sync).
@@ -589,6 +756,30 @@ The `sync` addon sources this file at startup and refuses to run if the file
 is world-readable (`stat -c %a` != `600`).
 
 ---
+
+### 3.7 Adapter 1 — Microsoft To Do
+
+Implemented by `addons/sync`.  The behaviour of v0.1 Parts 0, 3.3–3.6 is this
+adapter.  Known gaps against this spec (pull, remote deletes, token refresh)
+are tracked as issues, not as spec changes.
+
+### 3.8 Adapter 2 — Google Tasks
+
+Specified for typed clients (mobilis first); no bash implementation yet.
+
+- **Push.**  `title` is the line's `description` (§1.0) — no keys, no tags.
+  `notes` holds the **full raw line**, so any other client reading the same
+  remote list can rebuild the line losslessly.  `due:` → `due` as
+  `YYYY-MM-DDT00:00:00.000Z`.  `p:<n>` → `parent` set to the remote ID of
+  task `n` when that task is mapped; otherwise the child syncs at top level.
+- **Pull.**  If `notes` parses as a task line (§1.0) with the same `id:`, it
+  wins, then `status`/`completed`/`due`/`title` edits made in the Google UI are
+  applied on top of it.  Otherwise the remote task is new: the line is built
+  from `title` and `due`, and a fresh `id:` is allocated.
+- **Dropped:** priority, `rem:`, `star:`, `t:`, `s:`, `wait:`, `myday:`, `e:` —
+  they survive only inside `notes`.
+- **Conflicts:** §3.5 applies unchanged (local wins; remote copy saved to a
+  conflict file or the client's equivalent).
 
 ## Part 4 — Pattern Library
 
@@ -671,15 +862,17 @@ Buy milk p:7 id:12
 
 ```
 Write report due:2026-08-10 id:13
-Buy milk p:7 id:12
+Buy milk id:12
 ```
 
 Plus output:
 
 ```
-WARN  p:7 not found in any file (logbook/todo.txt line 2: Buy milk p:7 id:12)
 INFO  backfilled id:13 on line 1
+INFO  removed dangling p:7 on line 2
 ```
+
+(Without `--fix`, the same run prints `WARN` lines for both problems.)
 
 **Sync effect:** updated `map.tsv` with `last_hash` for the newly-ID'd line;
 orphan map rows (IDs in `map.tsv` with no matching task line) removed.
